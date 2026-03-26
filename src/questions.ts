@@ -1,6 +1,6 @@
 // First answer is always a correct one
 
-export default [
+export const QUESTIONS = [
   {
     id: "q1",
     text: "Which of the following definitions best describes React.js?",
@@ -71,4 +71,4 @@ export default [
       "Using an if-else statement."
     ]
   }
-]
+] as const
