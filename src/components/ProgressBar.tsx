@@ -38,7 +38,8 @@ const ProgressBar = ({ timeoutMs, onTimeout, questionIndex }: Props) => {
         onTimeout()
       }
     },
-    [onTimeout]
+    [onTimeout],
+    true
   )
 
   return (
