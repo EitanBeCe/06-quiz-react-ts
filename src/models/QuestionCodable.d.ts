@@ -7,3 +7,8 @@ export type Question = Questions[number]
 // export type Answers = Question["answers"]
 // export type Answer = Answers[number]
 export type Answer = Question["answers"][number]
+
+// export type UserAnswer = {
+//   questionId: number
+//   answer: Answer | undefined
+// }

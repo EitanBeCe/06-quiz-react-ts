@@ -2,22 +2,23 @@ import { useState } from "react"
 import { QUESTIONS } from "../questions.js"
 import { Answer } from "../models/QuestionCodable.js"
 import quizCompleteImg from "../assets/quiz-complete.png"
+import ProgressBar from "./ProgressBar.js"
 
 // type Props = {}
 
 const Quiz = () =>
   // props: Props
   {
-    const [userAnswers, setUserAnswers] = useState<Answer[]>([])
+    const [userAnswers, setUserAnswers] = useState<(Answer | null)[]>([])
 
     const activeQuestionIndex = userAnswers.length
     const i = activeQuestionIndex
 
-    const isQuizComplete = activeQuestionIndex === QUESTIONS.length
-
     const handleSelectedAnswer = (selectedAnswer: Answer) => {
       setUserAnswers(prev => [...prev, selectedAnswer])
     }
+
+    const isQuizComplete = activeQuestionIndex === QUESTIONS.length
 
     if (isQuizComplete) {
       return (
@@ -35,6 +36,7 @@ const Quiz = () =>
       <div id="quiz">
         <div id="question">
           <h2>{QUESTIONS[i].text}</h2>
+
           <ul id="answers">
             {shuffledAnswers.map(answer => (
               <li key={answer} className="answer">
@@ -44,6 +46,8 @@ const Quiz = () =>
               </li>
             ))}
           </ul>
+
+          <ProgressBar setUserAnswers={setUserAnswers} />
         </div>
       </div>
     )
