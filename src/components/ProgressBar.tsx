@@ -1,18 +1,17 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react"
-import { Answer } from "../models/QuestionCodable.js"
+import { useEffect, useState } from "react"
+import { useOnChange } from "../eitansHooks/useOnChange.js"
+import { useOnMount } from "../eitansHooks/useOnMount.js"
 
-type Props = { setUserAnswers: Dispatch<SetStateAction<(Answer | null)[]>> }
+type Props = {
+  timeoutMs: number
+  onTimeout: () => void
+  questionIndex: number
+}
 
-const TIMER = 20_000
+const ProgressBar = ({ timeoutMs, onTimeout, questionIndex }: Props) => {
+  const [remaningTime, setRemaningTime] = useState(timeoutMs)
 
-const ProgressBar = ({ setUserAnswers }: Props) => {
-  const [remaningTime, setRemaningTime] = useState(TIMER)
-
-  if (remaningTime <= 0) {
-    setUserAnswers(prev => [...prev, null])
-  }
-
-  useEffect(() => {
+  useOnMount(() => {
     const tik = 100
 
     const interval = setInterval(() => {
@@ -20,12 +19,32 @@ const ProgressBar = ({ setUserAnswers }: Props) => {
     }, tik)
 
     return () => clearInterval(interval)
-  }, [])
+  })
+
+  // When user pick an answer and question i changes
+  useOnChange(
+    questionIndex,
+    () => {
+      setRemaningTime(timeoutMs)
+    },
+    [timeoutMs]
+  )
+
+  // On timeout
+  useOnChange(
+    remaningTime,
+    newVal => {
+      if (newVal <= 0) {
+        onTimeout()
+      }
+    },
+    [onTimeout]
+  )
 
   return (
-    <progress value={remaningTime} max={TIMER} />
+    <progress value={remaningTime} max={timeoutMs} />
 
-    // <div className="mt-6 h-3 w-full overflow-hidden rounded-full bg-red-950/15 shadow-inner">
+    // <div className="mt-r h-3 w-full overflow-hidden rounded-full bg-red-950/15 shadow-inner">
     //   <div
     //     className="h-full rounded-full bg-gradient-to-r from-amber-500 to-red-600 transition-[width] duration-75 linear"
     //     style={{ width: `${(remaningTime / TIMER) * 100}%` }}

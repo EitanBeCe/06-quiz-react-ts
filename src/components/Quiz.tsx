@@ -18,7 +18,11 @@ const Quiz = () =>
       setUserAnswers(prev => [...prev, selectedAnswer])
     }
 
-    const isQuizComplete = activeQuestionIndex === QUESTIONS.length
+    const handleOnTimeout = () => {
+      setUserAnswers(prev => [...prev, null])
+    }
+
+    const isQuizComplete = activeQuestionIndex >= QUESTIONS.length
 
     if (isQuizComplete) {
       return (
@@ -47,7 +51,11 @@ const Quiz = () =>
             ))}
           </ul>
 
-          <ProgressBar setUserAnswers={setUserAnswers} />
+          <ProgressBar
+            timeoutMs={2_000}
+            onTimeout={handleOnTimeout}
+            questionIndex={activeQuestionIndex}
+          />
         </div>
       </div>
     )
