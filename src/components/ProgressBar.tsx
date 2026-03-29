@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react"
-import { useOnChange } from "../eitansHooks/useOnChange.js"
 import { useOnMount } from "../eitansHooks/useOnMount.js"
 
 type Props = {
   timeoutMs: number
-  onTimeout: () => void
-  questionIndex: number
+  handleOnTimeout: () => void
+  // questionIndex: number
 }
 
-const ProgressBar = ({ timeoutMs, onTimeout, questionIndex }: Props) => {
+const ProgressBar = ({ timeoutMs, handleOnTimeout }: Props) => {
   const [remaningTime, setRemaningTime] = useState(timeoutMs)
 
   useOnMount(() => {
@@ -21,26 +20,18 @@ const ProgressBar = ({ timeoutMs, onTimeout, questionIndex }: Props) => {
     return () => clearInterval(interval)
   })
 
-  // When user pick an answer and question i changes
-  useOnChange(
-    questionIndex,
-    () => {
-      setRemaningTime(timeoutMs)
-    },
-    [timeoutMs]
-  )
+  // Made this rerender by key={questionIndex}
+  // Reset timer on question index change. When user pick an answer and goes to a new question.
+  // useEffect(() => {
+  //   setRemaningTime(timeoutMs)
+  // }, [questionIndex, timeoutMs])
 
   // On timeout
-  useOnChange(
-    remaningTime,
-    newVal => {
-      if (newVal <= 0) {
-        onTimeout()
-      }
-    },
-    [onTimeout],
-    true
-  )
+  useEffect(() => {
+    if (remaningTime <= 0) {
+      handleOnTimeout()
+    }
+  }, [remaningTime, handleOnTimeout])
 
   return (
     <progress value={remaningTime} max={timeoutMs} />

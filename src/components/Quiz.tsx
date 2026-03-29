@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import { QUESTIONS } from "../questions.js"
 import { Answer } from "../models/QuestionCodable.js"
 import quizCompleteImg from "../assets/quiz-complete.png"
@@ -18,9 +18,9 @@ const Quiz = () =>
       setUserAnswers(prev => [...prev, selectedAnswer])
     }
 
-    const handleOnTimeout = () => {
+    const handleOnTimeout = useCallback(() => {
       setUserAnswers(prev => [...prev, null])
-    }
+    }, [])
 
     const isQuizComplete = activeQuestionIndex >= QUESTIONS.length
 
@@ -39,23 +39,21 @@ const Quiz = () =>
     return (
       <div id="quiz">
         <div id="question">
+          <ProgressBar
+            key={activeQuestionIndex} // Key for rernder on question change
+            timeoutMs={2_000}
+            handleOnTimeout={handleOnTimeout}
+          />
+
           <h2>{QUESTIONS[i].text}</h2>
 
           <ul id="answers">
             {shuffledAnswers.map(answer => (
               <li key={answer} className="answer">
-                <button onClick={() => handleSelectedAnswer(answer)}>
-                  {answer}
-                </button>
+                <button onClick={() => handleSelectedAnswer(answer)}>{answer}</button>
               </li>
             ))}
           </ul>
-
-          <ProgressBar
-            timeoutMs={2_000}
-            onTimeout={handleOnTimeout}
-            questionIndex={activeQuestionIndex}
-          />
         </div>
       </div>
     )
