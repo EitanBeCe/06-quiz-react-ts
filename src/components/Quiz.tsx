@@ -1,16 +1,11 @@
 import { useCallback, useState } from "react"
-import { QUESTIONS } from "../questions.js"
+import { AnswerStatus, QUESTIONS } from "../questions.js"
 import { Answer } from "../models/QuestionCodable.js"
 import quizCompleteImg from "../assets/quiz-complete.png"
 import ProgressBar from "./ProgressBar.js"
+import Answers from "./Answers.js"
 
 // type Props = {}
-
-enum AnswerStatus {
-  CORRECT,
-  WRONG,
-  NONE
-}
 
 const Quiz = () => {
   const [userAnswers, setUserAnswers] = useState<(Answer | null)[]>([])
@@ -48,38 +43,27 @@ const Quiz = () => {
     )
   }
 
-  const shuffledAnswers = [...QUESTIONS[i].answers]
-  shuffledAnswers.sort(() => Math.random() - 0.5)
-
   return (
     <div id="quiz">
-      <div id="question">
+      <div
+        key={i} // Key for rernder on question change
+        id="question"
+      >
         <ProgressBar
-          key={i} // Key for rernder on question change
+          // key={i}
           timeoutMs={5_000}
           handleOnTimeout={handleOnTimeout}
         />
 
         <h2>{QUESTIONS[i].text}</h2>
 
-        <ul id="answers">
-          {shuffledAnswers.map(answer => (
-            <li key={answer} className="answer">
-              <button
-                className={
-                  answer === QUESTIONS[i].answers[0] && answerStatus === AnswerStatus.CORRECT
-                    ? "correct"
-                    : answer === QUESTIONS[i].answers[0] && answerStatus === AnswerStatus.WRONG
-                    ? "wrong"
-                    : ""
-                }
-                onClick={() => handleSelectedAnswer(answer)}
-              >
-                {answer}
-              </button>
-            </li>
-          ))}
-        </ul>
+        <Answers
+          // key={i + 1}
+          answers={QUESTIONS[i].answers}
+          // seletedAnswer={userAnswers[userAnswers.length - 1]}
+          answerStatus={answerStatus}
+          handleSelectedAnswer={handleSelectedAnswer}
+        />
       </div>
     </div>
   )

@@ -1,5 +1,10 @@
-// First answer is always a correct one
+export enum AnswerStatus {
+  CORRECT,
+  WRONG,
+  NONE
+}
 
+// First answer is always a correct one
 export const QUESTIONS = [
   {
     id: "q1",
