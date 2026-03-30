@@ -20,12 +20,6 @@ const Answers = ({ answers, answerStatus, handleSelectedAnswer }: Props) => {
   //   }
   // }, [answers])
 
-  // if (!shuffledAnswers) {
-  //   console.log("d")
-
-  //   setShuffledAnswers(prev => prev.sort(() => Math.random() - 0.5))
-  // }
-
   return (
     <ul id="answers">
       {shuffledAnswers.current.map(answer => (
@@ -33,11 +27,12 @@ const Answers = ({ answers, answerStatus, handleSelectedAnswer }: Props) => {
         <li key={answer} className="answer">
           <button
             className={
-              answer === answers[0] && answerStatus === AnswerStatus.CORRECT
-                ? "correct"
-                : answer === answers[0] && answerStatus === AnswerStatus.WRONG
-                ? "wrong"
-                : ""
+              answer === answers[0] && answerStatus !== AnswerStatus.NONE ? "correct" : ""
+              // answer === answers[0] && answerStatus === AnswerStatus.CORRECT
+              //   ? "correct"
+              //   : answer === answers[0] && answerStatus === AnswerStatus.WRONG
+              //   ? "wrong"
+              //   : ""
             }
             onClick={() => handleSelectedAnswer(answer)}
           >
