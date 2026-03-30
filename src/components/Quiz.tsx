@@ -6,57 +6,83 @@ import ProgressBar from "./ProgressBar.js"
 
 // type Props = {}
 
-const Quiz = () =>
-  // props: Props
-  {
-    const [userAnswers, setUserAnswers] = useState<(Answer | null)[]>([])
+enum AnswerStatus {
+  CORRECT,
+  WRONG,
+  NONE
+}
 
-    const activeQuestionIndex = userAnswers.length
-    const i = activeQuestionIndex
+const Quiz = () => {
+  const [userAnswers, setUserAnswers] = useState<(Answer | null)[]>([])
+  const [answerStatus, setAnswerStatus] = useState(AnswerStatus.NONE)
 
-    const handleSelectedAnswer = (selectedAnswer: Answer) => {
+  // const activeQuestionIndex = answerStatus === AnswerStatus.NONE ? userAnswers.length : userAnswers.length - 1
+  const activeQuestionIndex = userAnswers.length
+  const i = activeQuestionIndex
+
+  const handleSelectedAnswer = (selectedAnswer: Answer) => {
+    if (selectedAnswer === QUESTIONS[i].answers[0]) {
+      setAnswerStatus(AnswerStatus.CORRECT)
+    } else {
+      setAnswerStatus(AnswerStatus.WRONG)
+    }
+
+    setTimeout(() => {
+      setAnswerStatus(AnswerStatus.NONE)
       setUserAnswers(prev => [...prev, selectedAnswer])
-    }
+    }, 1000)
+  }
 
-    const handleOnTimeout = useCallback(() => {
-      setUserAnswers(prev => [...prev, null])
-    }, [])
+  const handleOnTimeout = useCallback(() => {
+    setUserAnswers(prev => [...prev, null])
+  }, [])
 
-    const isQuizComplete = activeQuestionIndex >= QUESTIONS.length
+  const isQuizComplete = activeQuestionIndex >= QUESTIONS.length
 
-    if (isQuizComplete) {
-      return (
-        <div id="summary">
-          <img src={quizCompleteImg} alt="Trophy icon" />
-          <h2>Quiz Completed!</h2>
-        </div>
-      )
-    }
-
-    const shuffledAnswers = [...QUESTIONS[i].answers]
-    shuffledAnswers.sort(() => Math.random() - 0.5)
-
+  if (isQuizComplete) {
     return (
-      <div id="quiz">
-        <div id="question">
-          <ProgressBar
-            key={activeQuestionIndex} // Key for rernder on question change
-            timeoutMs={2_000}
-            handleOnTimeout={handleOnTimeout}
-          />
-
-          <h2>{QUESTIONS[i].text}</h2>
-
-          <ul id="answers">
-            {shuffledAnswers.map(answer => (
-              <li key={answer} className="answer">
-                <button onClick={() => handleSelectedAnswer(answer)}>{answer}</button>
-              </li>
-            ))}
-          </ul>
-        </div>
+      <div id="summary">
+        <img src={quizCompleteImg} alt="Trophy icon" />
+        <h2>Quiz Completed!</h2>
       </div>
     )
   }
+
+  const shuffledAnswers = [...QUESTIONS[i].answers]
+  shuffledAnswers.sort(() => Math.random() - 0.5)
+
+  return (
+    <div id="quiz">
+      <div id="question">
+        <ProgressBar
+          key={i} // Key for rernder on question change
+          timeoutMs={5_000}
+          handleOnTimeout={handleOnTimeout}
+        />
+
+        <h2>{QUESTIONS[i].text}</h2>
+
+        <ul id="answers">
+          {shuffledAnswers.map(answer => (
+            <li key={answer} className="answer">
+              <button
+                className={
+                  answer === QUESTIONS[i].answers[0] && answerStatus === AnswerStatus.CORRECT
+                    ? "correct"
+                    : answer === QUESTIONS[i].answers[0] && answerStatus === AnswerStatus.WRONG
+                    ? "wrong"
+                    : ""
+                }
+                onClick={() => handleSelectedAnswer(answer)}
+              >
+                {answer}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  )
+}
 
 export default Quiz
